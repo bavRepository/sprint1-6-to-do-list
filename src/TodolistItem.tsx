@@ -36,7 +36,7 @@ export const TodolistItem: FC<TodolistItemProps> = ({ title, tasks, date }) => {
             return (
               <li key={task.id}>
                 <input type='checkbox' checked={task.isDone} />
-                <span>task.title</span>
+                <span>{task.title}</span>
               </li>
             )
           })}
