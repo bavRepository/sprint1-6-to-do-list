@@ -7,11 +7,6 @@ import {
 } from './utils/ModifyElement.tsx'
 import { useState } from 'react'
 
-export type TaskType = {
-  title: string
-  isDone: boolean
-}
-
 const tasksWithNoId: TaskType[] = [
   { title: 'HTML&CSS', isDone: true },
   { title: 'JS', isDone: true },
@@ -21,10 +16,17 @@ const tasksWithNoId: TaskType[] = [
   { title: 'RTK query', isDone: false },
 ]
 
+export type TaskType = {
+  title: string
+  isDone: boolean
+}
+
+export type changeTaskStatusType = (id: string, status: boolean) => void
+
 export const App = () => {
   let tasksData: TaskTypeWithId[] = addIdToElementList(tasksWithNoId)
   const [tasks, setTasks] = useState<TaskTypeWithId[]>(tasksData)
-  const [filter, setFilter] = useState<string>('All')
+  const [filter, setFilter] = useState<string>('all')
 
   const deleteTask = (id: TaskTypeWithId['id']) => {
     const newTasks: TaskTypeWithId[] = tasks.filter((task) => task.id !== id)
@@ -32,6 +34,19 @@ export const App = () => {
     setTasks(newTasks)
   }
 
+  const changeTaskStatus: changeTaskStatusType = (
+    id: string,
+    isDone: boolean,
+  ) => {
+    const task = tasks.find((task) => {
+      return task.id === id
+    })
+    if (task) {
+      task.isDone = isDone
+    }
+
+    setTasks([...tasks])
+  }
   const changeFilter = (filter: string) => {
     setFilter(filter)
   }
@@ -47,13 +62,21 @@ export const App = () => {
     ])
   }
 
-  let filteredTasks: TaskTypeWithId[] = tasks
-  if (filter === 'Active') {
-    filteredTasks = tasks.filter((task) => !task.isDone)
+  const getFilteredTasks = (
+    tasks: TaskTypeWithId[],
+    filter: string,
+  ): TaskTypeWithId[] => {
+    if (filter === 'all') return tasks
+    let newTasks
+    if (filter === 'active') {
+      newTasks = tasks.filter((task) => !task.isDone)
+    } else {
+      newTasks = tasks.filter((task) => task.isDone)
+    }
+    return newTasks
   }
-  if (filter === 'Completed') {
-    filteredTasks = tasks.filter((task) => task.isDone)
-  }
+
+  const filteredTasks: TaskTypeWithId[] = getFilteredTasks(tasks, filter)
 
   return (
     <div className='app'>
@@ -63,7 +86,9 @@ export const App = () => {
         title='What to learn'
         tasks={filteredTasks}
         changeFilter={changeFilter}
+        filter={filter}
         createTask={createTask}
+        changeTaskStatus={changeTaskStatus}
       />
     </div>
   )
