@@ -73,7 +73,7 @@ export const TodolistItem: FC<TodolistItemProps> = ({
               <li key={task.id}>
                 <input type='checkbox' checked={task.isDone} />
                 <span>{task.title}</span>
-                <button onClick={() => deleteTaskHandler}>x</button>
+                <button onClick={deleteTaskHandler}>x</button>
               </li>
             )
           })}
