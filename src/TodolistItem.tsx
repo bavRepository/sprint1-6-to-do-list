@@ -1,12 +1,7 @@
 import { ChangeEvent, FC, KeyboardEvent, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { TaskTypeWithId } from './utils/ModifyElement.tsx'
-import {
-  changeTaskStatusType,
-  FilterValues,
-  TaskType,
-  Todolist,
-} from './App.tsx'
+import { FilterValues, TaskType, Todolist } from './App.tsx'
 import { Button } from './Button.tsx'
 
 export type createTaskFnType = (title: TaskType['title']) => void
@@ -66,7 +61,7 @@ export const TodolistItem: FC<TodolistItemProps> = (props) => {
   }
 
   const createTaskOnEnterHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && taskTitle && taskTitle.length <= 15) {
       createTaskHandler()
     }
   }
@@ -86,6 +81,8 @@ export const TodolistItem: FC<TodolistItemProps> = (props) => {
     deleteTodolist(id)
   }
 
+  const isButtonAddTaskDisabled = !taskTitle.length || taskTitle.length > 15
+
   return (
     <div>
       <div className={'container'}>
@@ -100,20 +97,18 @@ export const TodolistItem: FC<TodolistItemProps> = (props) => {
           onChange={changeTaskTitleHandler}
           onKeyDown={createTaskOnEnterHandler}
         />
+
+        <button onClick={createTaskHandler} disabled={isButtonAddTaskDisabled}>
+          +
+        </button>
+        {error && <p className={'error-message'}>{error}</p>}
         {!taskTitle && <div>Please, enter title</div>}
         {taskTitle.length > 15 && (
           <div style={{ color: 'red' }}>Title length too long</div>
         )}
-        {taskTitle.length && taskTitle.length <= 15 && (
+        {!!taskTitle.length && taskTitle.length <= 15 && (
           <div>Amount of charters (15 - {taskTitle.length}</div>
         )}
-        <button
-          onClick={createTaskHandler}
-          disabled={!taskTitle.length || taskTitle.length > 15}
-        >
-          +
-        </button>
-        {error && <p className={'error-message'}>{error}</p>}
       </div>
       {tasks.length === 0 ? (
         <p>Тасок нет</p>

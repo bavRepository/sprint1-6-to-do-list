@@ -1,6 +1,6 @@
-import { createTaskFnType, TodolistItem } from './TodolistItem.tsx'
+import { TodolistItem } from './TodolistItem.tsx'
 import './App.css'
-import { getId, TaskTypeWithId } from './utils/ModifyElement.tsx'
+import { getId } from './utils/ModifyElement.tsx'
 import { useState } from 'react'
 
 export type FilterValues = 'all' | 'active' | 'completed'
@@ -23,8 +23,6 @@ export type TaskType = {
 export type TasksState = {
   [key: string]: TaskType[]
 }
-
-export type changeTaskStatusType = (id: string, status: boolean) => void
 
 export const App = () => {
   const [todolists, setTodolists] = useState<Todolist[]>([
@@ -63,15 +61,11 @@ export const App = () => {
     taskId: string,
     isDone: boolean,
   ) => {
-    /** Берем таски тудулиста по его `id`: */
     const todolistTasks = tasks[todolistId]
-    /** Итерируемся по массиву тасок нужного тудулиста и изменяем статус нужной таски: */
     const newTodolistTasks = todolistTasks.map((task) =>
       task.id == taskId ? { ...task, isDone } : task,
     )
-    /** Перезаписываем массив тасок нужного тудулиста на новый, где у таски изменен статус: */
     tasks[todolistId] = newTodolistTasks
-    /** Устанавливаем в state копию объекта, чтобы React отреагировал перерисовкой: */
     setTasks({ ...tasks })
   }
 
@@ -85,9 +79,7 @@ export const App = () => {
 
   const deleteTodolist = (todolistId: string) => {
     setTodolists(todolists.filter((todolist) => todolist.id !== todolistId))
-    /** Удаляем таски нужного тудулиста из стейта тасок: */
     delete tasks[todolistId]
-    /** Устанавливаем в state копию объекта: */
     setTasks({ ...tasks })
   }
 
