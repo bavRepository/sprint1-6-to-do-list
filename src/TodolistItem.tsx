@@ -1,19 +1,28 @@
 import { ChangeEvent, FC, KeyboardEvent, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { TaskTypeWithId } from './utils/ModifyElement.tsx'
-import { changeTaskStatusType, TaskType } from './App.tsx'
+import {
+  changeTaskStatusType,
+  FilterValues,
+  TaskType,
+  Todolist,
+} from './App.tsx'
 import { Button } from './Button.tsx'
 
 export type createTaskFnType = (title: TaskType['title']) => void
 type TodolistItemProps = {
-  title: string
+  todolist: Todolist
+  deleteTodolist: (todolistId: string) => void
   tasks: TaskTypeWithId[]
   date?: string
-  deleteTask: (taskId: string) => void
-  changeFilter: (filter: string) => void
-  filter: string
-  createTask: createTaskFnType
-  changeTaskStatus: changeTaskStatusType
+  deleteTask: (todolistId: string, taskId: string) => void
+  changeFilter: (id: string, filter: FilterValues) => void
+  createTask: (todolistId: string, title: string) => void
+  changeTaskStatus: (
+    todolistId: string,
+    taskId: string,
+    isDone: boolean,
+  ) => void
 }
 
 type ButtonsType = {
@@ -28,16 +37,7 @@ let buttonsData: ButtonsType[] = [
   { id: uuidv4(), title: 'Completed', filter: 'completed' },
 ]
 
-export const TodolistItem: FC<TodolistItemProps> = ({
-  deleteTask,
-  title,
-  tasks,
-  date,
-  changeFilter,
-  createTask,
-  changeTaskStatus,
-  filter,
-}) => {
+export const TodolistItem: FC<TodolistItemProps> = (props) => {
   const [taskTitle, setTaskTitle] = useState('')
   const [error, setError] = useState<string | null>(null)
   const changeTaskTitleHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -45,9 +45,20 @@ export const TodolistItem: FC<TodolistItemProps> = ({
     setError(null)
   }
 
+  const {
+    deleteTask,
+    todolist: { id, title, filter },
+    deleteTodolist,
+    tasks,
+    date,
+    changeFilter,
+    createTask,
+    changeTaskStatus,
+  } = props
+
   const createTaskHandler = () => {
     if (taskTitle.trim() !== '') {
-      createTask(taskTitle)
+      createTask(id, taskTitle)
       setTaskTitle('')
     } else {
       setError('Title is required!')
@@ -61,15 +72,26 @@ export const TodolistItem: FC<TodolistItemProps> = ({
   }
 
   const changeTaskStatusHandler = (
-    id: string,
+    taskId: string,
     e: ChangeEvent<HTMLInputElement>,
   ) => {
-    changeTaskStatus(id, e.currentTarget.checked)
+    changeTaskStatus(id, taskId, e.currentTarget.checked)
+  }
+
+  const changeFilterHandler = (filter: FilterValues) => {
+    changeFilter(id, filter)
+  }
+
+  const deleteTodolistHandler = () => {
+    deleteTodolist(id)
   }
 
   return (
     <div>
-      <h3>{title}</h3>
+      <div className={'container'}>
+        <h3>{title}</h3>
+        <Button title={'x'} onClick={deleteTodolistHandler} />
+      </div>
       <div>{date}</div>
       <div>
         <input
@@ -78,8 +100,19 @@ export const TodolistItem: FC<TodolistItemProps> = ({
           onChange={changeTaskTitleHandler}
           onKeyDown={createTaskOnEnterHandler}
         />
-
-        <button onClick={createTaskHandler}>+</button>
+        {!taskTitle && <div>Please, enter title</div>}
+        {taskTitle.length > 15 && (
+          <div style={{ color: 'red' }}>Title length too long</div>
+        )}
+        {taskTitle.length && taskTitle.length <= 15 && (
+          <div>Amount of charters (15 - {taskTitle.length}</div>
+        )}
+        <button
+          onClick={createTaskHandler}
+          disabled={!taskTitle.length || taskTitle.length > 15}
+        >
+          +
+        </button>
         {error && <p className={'error-message'}>{error}</p>}
       </div>
       {tasks.length === 0 ? (
@@ -88,7 +121,7 @@ export const TodolistItem: FC<TodolistItemProps> = ({
         <ul>
           {tasks.map((task) => {
             const deleteTaskHandler = () => {
-              deleteTask(task.id)
+              deleteTask(id, task.id)
             }
             return (
               <li key={task.id} className={task.isDone ? 'is-done' : ''}>
@@ -111,7 +144,7 @@ export const TodolistItem: FC<TodolistItemProps> = ({
             <Button
               key={button.id}
               className={filter === button.filter ? 'active-filter' : ''}
-              onClick={() => changeFilter(button.filter)}
+              onClick={() => changeFilterHandler(button.filter)}
               title={button.title}
             />
           )

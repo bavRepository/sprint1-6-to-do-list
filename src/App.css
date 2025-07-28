@@ -1,6 +1,9 @@
 .app {
+
   padding: 30px;
   display: flex;
+  justify-content: center;
+  gap :100px;
 }
 
 .app > div {
@@ -21,4 +24,9 @@
 
 .is-done {
   opacity: 0.5;
+}
+
+.container {
+  display: flex;
+  align-items: center;
 }

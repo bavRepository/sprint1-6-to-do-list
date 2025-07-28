@@ -6,11 +6,3 @@ export type TaskTypeWithId = TaskType & { id: string }
 export const getId = () => {
   return uuidv4()
 }
-
-export const addIdToElementList: (
-  elementList: TaskType[],
-) => TaskTypeWithId[] = (elementList) => {
-  return elementList.map((item) => {
-    return { id: uuidv4(), ...item }
-  })
-}
