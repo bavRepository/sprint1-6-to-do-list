@@ -1,8 +1,14 @@
 import { ChangeEvent, FC, KeyboardEvent, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { TaskTypeWithId } from './utils/ModifyElement.tsx'
-import { FilterValues, TaskType, Todolist } from './App.tsx'
+import {
+  changeTaskTitleType,
+  FilterValues,
+  TaskType,
+  Todolist,
+} from './App.tsx'
 import { Button } from './Button.tsx'
+import { EditableSpan } from './EditableSpan.tsx'
 
 export type createTaskFnType = (title: TaskType['title']) => void
 type TodolistItemProps = {
@@ -13,6 +19,8 @@ type TodolistItemProps = {
   deleteTask: (todolistId: string, taskId: string) => void
   changeFilter: (id: string, filter: FilterValues) => void
   createTask: (todolistId: string, title: string) => void
+  changeTaskTitle: changeTaskTitleType
+  changeTodoListTitle: (todolistId: string, title: string) => void
   changeTaskStatus: (
     todolistId: string,
     taskId: string,
@@ -49,6 +57,8 @@ export const TodolistItem: FC<TodolistItemProps> = (props) => {
     changeFilter,
     createTask,
     changeTaskStatus,
+    changeTaskTitle,
+    changeTodoListTitle,
   } = props
 
   const createTaskHandler = () => {
@@ -83,10 +93,16 @@ export const TodolistItem: FC<TodolistItemProps> = (props) => {
 
   const isButtonAddTaskDisabled = !taskTitle.length || taskTitle.length > 15
 
+  const changeTodolistTitleHandler = (title: string) => {
+    changeTodoListTitle(id, title)
+  }
+
   return (
     <div>
       <div className={'container'}>
-        <h3>{title}</h3>
+        <h3>
+          <EditableSpan value={title} onChange={changeTodolistTitleHandler} />
+        </h3>
         <Button title={'x'} onClick={deleteTodolistHandler} />
       </div>
       <div>{date}</div>
@@ -118,6 +134,9 @@ export const TodolistItem: FC<TodolistItemProps> = (props) => {
             const deleteTaskHandler = () => {
               deleteTask(id, task.id)
             }
+            const changeTaskTitleHandler = (title: string) => {
+              changeTaskTitle(id, task.id, title)
+            }
             return (
               <li key={task.id} className={task.isDone ? 'is-done' : ''}>
                 <input
@@ -125,7 +144,10 @@ export const TodolistItem: FC<TodolistItemProps> = (props) => {
                   checked={task.isDone}
                   onChange={(e) => changeTaskStatusHandler(task.id, e)}
                 />
-                <span>{task.title}</span>
+                <EditableSpan
+                  value={task.title}
+                  onChange={changeTaskTitleHandler}
+                />
                 <button onClick={deleteTaskHandler}>x</button>
               </li>
             )
