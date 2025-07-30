@@ -5,7 +5,7 @@
   "type": "module",
   "homepage": "https://bavRepository.github.io/sprint1-6-to-do-list",
   "scripts": {
-    "predeploy" : "pnpm run build",
+    "predeploy": "pnpm run build",
     "deploy": "gh-pages -d dist",
     "dev": "vite --port 3000",
     "build": "tsc -b && vite build",
@@ -13,6 +13,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.2.0",
+    "@mui/material": "^7.2.0",
     "gh-pages": "^6.3.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
