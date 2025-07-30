@@ -32,6 +32,8 @@ export const CreateItemForm = ({ onCreateItem }: Props) => {
     }
   }
 
+  const isButtonDisabled = title.length > 15
+
   return (
     <div>
       <TextField
@@ -40,12 +42,16 @@ export const CreateItemForm = ({ onCreateItem }: Props) => {
         className={error ? 'error' : ''}
         value={title}
         size={'small'}
-        error={!!error}
+        error={!!error || isButtonDisabled}
         helperText={error}
         onChange={changeItemTitleHandler}
         onKeyDown={createItemOnEnterHandler}
       />
-      <IconButton onClick={createItemHandler} color={'primary'}>
+      <IconButton
+        onClick={createItemHandler}
+        color={'primary'}
+        disabled={isButtonDisabled}
+      >
         <AddBoxIcon />
       </IconButton>
       {title.length > 15 && (
