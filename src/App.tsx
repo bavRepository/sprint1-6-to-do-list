@@ -73,7 +73,7 @@ export const App = () => {
       },
     },
   })
-
+  // TaskList CRUD
   const changeMode = () => {
     setThemeMode(themeMode === 'light' ? 'dark' : 'light')
   }
@@ -105,21 +105,23 @@ export const App = () => {
     setTasks({ ...tasks })
   }
 
-  const changeFilter = (todolistId: string, filter: FilterValues) => {
-    setTodolists(
-      todolists.map((todolist) =>
-        todolist.id === todolistId ? { ...todolist, filter } : todolist,
+  const changeTaskTitle: changeTaskTitleType = (todolistId, id, title) => {
+    setTasks({
+      ...tasks,
+      [todolistId]: tasks[todolistId].map((task) =>
+        task.id === id ? { ...task, title } : task,
       ),
-    )
+    })
   }
 
+  // TodoList CRUD
   const deleteTodolist = (todolistId: string) => {
     setTodolists(todolists.filter((todolist) => todolist.id !== todolistId))
     delete tasks[todolistId]
     setTasks({ ...tasks })
   }
 
-  const createTaskHandler = (title: string) => {
+  const createTodoListHandler = (title: string) => {
     const id = getId()
     const newTodolist: Todolist = { id, title, filter: 'all' }
 
@@ -128,13 +130,12 @@ export const App = () => {
     setTasks(newTaskObj)
   }
 
-  const changeTaskTitle: changeTaskTitleType = (todolistId, id, title) => {
-    setTasks({
-      ...tasks,
-      [todolistId]: tasks[todolistId].map((task) =>
-        task.id === id ? { ...task, title } : task,
+  const changeTodoListFilter = (todolistId: string, filter: FilterValues) => {
+    setTodolists(
+      todolists.map((todolist) =>
+        todolist.id === todolistId ? { ...todolist, filter } : todolist,
       ),
-    })
+    )
   }
 
   const changeTodoListTitle = (todolistId: string, title: string) => {
@@ -168,7 +169,7 @@ export const App = () => {
         </AppBar>
         <Container maxWidth={'lg'}>
           <Grid container sx={{ mb: '30px' }}>
-            <CreateItemForm onCreateItem={createTaskHandler} />
+            <CreateItemForm onCreateItem={createTodoListHandler} />
           </Grid>
           <Grid container spacing={4}>
             {todolists.map((todolist) => {
@@ -189,7 +190,7 @@ export const App = () => {
                       changeTodoListTitle={changeTodoListTitle}
                       tasks={filteredTasks}
                       deleteTask={deleteTask}
-                      changeFilter={changeFilter}
+                      changeFilter={changeTodoListFilter}
                       createTask={createTask}
                       changeTaskStatus={changeTaskStatus}
                       deleteTodolist={deleteTodolist}
