@@ -58,7 +58,7 @@ export const CreateItemForm = ({ onCreateItem }: Props) => {
         <div style={{ color: 'red' }}>Title length too long</div>
       )}
       {!!title.length && title.length <= 15 && (
-        <div>Amount of charters (15 - {title.length}</div>
+        <div>Amount of charters (15 - {title.length})</div>
       )}
     </div>
   )

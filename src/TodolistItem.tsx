@@ -29,7 +29,7 @@ type TodolistItemProps = {
   changeFilter: (id: string, filter: FilterValues) => void
   createTask: (todolistId: string, title: string) => void
   changeTaskTitle: changeTaskTitleType
-  changeTodoListTitle: (todolistId: string, title: string) => void
+  changeTodolistTitle: (todolistId: string, title: string) => void
   changeTaskStatus: (
     todolistId: string,
     taskId: string,
@@ -60,9 +60,8 @@ export const TodolistItem: FC<TodolistItemProps> = (props) => {
     createTask,
     changeTaskStatus,
     changeTaskTitle,
-    changeTodoListTitle,
+    changeTodolistTitle,
   } = props
-
   const createTaskHandler = (taskTitle: string) => {
     createTask(id, taskTitle)
   }
@@ -83,7 +82,7 @@ export const TodolistItem: FC<TodolistItemProps> = (props) => {
   }
 
   const changeTodolistTitleHandler = (title: string) => {
-    changeTodoListTitle(id, title)
+    changeTodolistTitle(id, title)
   }
 
   return (
@@ -98,7 +97,7 @@ export const TodolistItem: FC<TodolistItemProps> = (props) => {
       </div>
       <div>{date}</div>
       <CreateItemForm onCreateItem={createTaskHandler} />
-      {tasks.length === 0 ? (
+      {!tasks || tasks.length === 0 ? (
         <p>Тасок нет</p>
       ) : (
         <List>
