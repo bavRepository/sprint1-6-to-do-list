@@ -1,6 +1,5 @@
 import { TodolistItem } from './TodolistItem.tsx'
 import './App.css'
-import { getId } from './utils/ModifyElement.tsx'
 import { useReducer, useState } from 'react'
 import { CreateItemForm } from './CreateIteamForm.tsx'
 import AppBar from '@mui/material/AppBar'
@@ -29,6 +28,7 @@ import {
   deleteTaskAC,
   tasksReducer,
 } from './model/tasks-reducer.ts'
+import { v1 } from 'uuid'
 
 type ThemeMode = 'dark' | 'light'
 
@@ -56,10 +56,28 @@ export type changeTaskTitleType = (
   title: string,
 ) => void
 
-export const App = () => {
-  const [todolists, dispatchToTodolists] = useReducer(todolistsReducer, [])
+const todolistId1 = v1()
+const todolistId2 = v1()
 
-  const [tasks, dispatchToTasks] = useReducer(tasksReducer, {})
+export const App = () => {
+  const [todolists, dispatchToTodolists] = useReducer(todolistsReducer, [
+    { id: todolistId1, title: 'What to learn', filter: 'all' },
+
+    { id: todolistId2, title: 'What to buy', filter: 'all' },
+  ])
+
+  const [tasks, dispatchToTasks] = useReducer(tasksReducer, {
+    [todolistId1]: [
+      { id: '1', title: 'CSS', isDone: false },
+      { id: '2', title: 'JS', isDone: true },
+      { id: '3', title: 'React', isDone: false },
+    ],
+    [todolistId2]: [
+      { id: '1', title: 'bread', isDone: false },
+      { id: '2', title: 'milk', isDone: true },
+      { id: '3', title: 'tea', isDone: false },
+    ],
+  })
 
   const [themeMode, setThemeMode] = useState<ThemeMode>('light')
 
@@ -87,9 +105,9 @@ export const App = () => {
   const changeTaskStatus = (
     todolistId: string,
     taskId: string,
-    checked: boolean,
+    isDone: boolean,
   ) => {
-    dispatchToTasks(changeTaskStatusAC({ todolistId, taskId, checked }))
+    dispatchToTasks(changeTaskStatusAC({ todolistId, taskId, isDone }))
   }
 
   const changeTaskTitle: changeTaskTitleType = (

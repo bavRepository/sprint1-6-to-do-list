@@ -51,15 +51,15 @@ export const createTaskAC = ({
 export const changeTaskStatusAC = ({
   todolistId,
   taskId,
-  checked,
+  isDone,
 }: {
   todolistId: string
   taskId: string
-  checked: boolean
+  isDone: boolean
 }) => {
   return {
     type: 'update_taskStatus',
-    payload: { todolistId, taskId, checked },
+    payload: { todolistId, taskId, isDone },
   } as const
 }
 
@@ -124,7 +124,7 @@ export const tasksReducer = (
         (task) => task.id === action.payload.taskId,
       )
       if (newTask) {
-        newTask.isDone = action.payload.checked
+        newTask.isDone = action.payload.isDone
       }
 
       return newState
